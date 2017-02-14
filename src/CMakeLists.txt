@@ -1,0 +1,5 @@
+add_subdirectory(Foundation)
+add_subdirectory(HttpServer)
+add_subdirectory(Middleware)
+add_subdirectory(Router)
+add_subdirectory(Controller)

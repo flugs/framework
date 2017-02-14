@@ -36,3 +36,26 @@ Makefile*
 # QtCtreator CMake
 CMakeLists.txt.user
 
+
+
+.DS_Store
+*.pro.user
+*.exe
+*.qm
+*.dll
+*.7z
+build/
+.build/
+install/
+Thumbs.db
+CMakeLists.txt.user
+.kdev4/
+*.kdev4
+.directory
+
+doc/sloccount.sc
+doc/api
+doc/pmd.xml
+doc/coverage
+doc/coverage.xml
+doc/cppcheck.xml

@@ -1,0 +1,4 @@
+@PACKAGE_INIT@
+
+set_and_check(FLUGS_MIDDLEWARE_INCLUDE_DIRS "@PACKAGE_MIDDLEWARE_INCLUDE_DIRS@")
+include("${CMAKE_CURRENT_LIST_DIR}/FlugsMiddlewareTargets.cmake")

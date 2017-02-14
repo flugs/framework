@@ -1,0 +1,4 @@
+@PACKAGE_INIT@
+
+set_and_check(FLUGS_ROUTER_INCLUDE_DIRS "@PACKAGE_ROUTER_INCLUDE_DIRS@")
+include("${CMAKE_CURRENT_LIST_DIR}/FlugsRouterTargets.cmake")
