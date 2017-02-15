@@ -50,7 +50,7 @@ protected:
     QString pathPrefix;
     Qt::CaseSensitivity pathPrefixCaseSensitivity = Qt::CaseSensitive;
     QString host;
-    Middleware* firstMiddleware = nullptr;
+    Middleware* middleware = nullptr;
     Scope* scope = nullptr;
     Scope* lastScope = nullptr;
     QList<Route*> routes;

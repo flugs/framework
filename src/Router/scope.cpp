@@ -95,17 +95,14 @@ Scope& Scope::host(const QString& host)
 
 Scope& Scope::use(Middleware* m)
 {
+    Q_ASSERT(m);
     Q_D(Scope);
 
-    if (Q_UNLIKELY(!m)) {
-        return *this;
-    }
-
-    if (Q_LIKELY(!d->firstMiddleware)) {
-        d->firstMiddleware->setNextMiddleware(m);
+    if(d->middleware) {
+        d->middleware->setNextMiddleware(m);
     }
     else {
-        d->firstMiddleware = m;
+        d->middleware = m;
     }
 
     m->setNextMiddleware(this);
@@ -117,8 +114,8 @@ void Scope::handleRequest(Request req, Response* res)
 {
     Q_D(Scope);
 
-    if (d->firstMiddleware) {
-        d->firstMiddleware->handle(req, res);
+    if (d->middleware) {
+        d->middleware->handle(req, res);
     }
     else {
         handle(req, res);
