@@ -49,6 +49,11 @@ protected:
 
     virtual void terminate(const Request& req, const Response* res);
 
+    bool hasNext() const
+    {
+        return m_nextMiddleware || m_nextMiddlewareFunc;
+    }
+
     void next(Request req, Response* res)
     {
         if (m_nextMiddleware) {
