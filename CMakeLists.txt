@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.7.0)
-project(flugs VERSION 0.9.50)
+project(flugs_framework VERSION 0.9.50)
 
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules")
 
