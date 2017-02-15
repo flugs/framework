@@ -52,6 +52,7 @@ protected:
     QString host;
     Middleware* firstMiddleware = nullptr;
     Scope* scope = nullptr;
+    Scope* lastScope = nullptr;
     QList<Route*> routes;
 };
 

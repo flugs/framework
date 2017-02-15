@@ -65,14 +65,16 @@ Scope& Scope::subScope()
     Q_D(Scope);
 
     Scope* s = new Scope(this);
-    if (d->scope) {
-        d->scope->setNextMiddleware(s);
+    s->setNextMiddleware([&](Request& req, Response* res) { next(req, res); });
+
+    if(d->lastScope) {
+        d->lastScope->setNextMiddleware(s);
     }
-    else {
+    d->lastScope = s;
+
+    if(!d->scope) {
         d->scope = s;
     }
-
-    d->scope->setNextMiddleware([&](Request& req, Response* res) { next(req, res); });
 
     return *s;
 }
