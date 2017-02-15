@@ -110,7 +110,7 @@ if(NOT CONFIG_DESTINATION_FOUND)
           BUNDLE   DESTINATION "${BUNDLE_INSTALL_DIR}"  COMPONENT Runtime
           LIBRARY  DESTINATION "${LIB_INSTALL_DIR}"     COMPONENT Runtime
           ARCHIVE  DESTINATION "${LIB_INSTALL_DIR}"     COMPONENT Devel
-          INCLUDES DESTINATION "${INCLUDE_INSTALL_DIR}" COMPONENT Devel
+          INCLUDES DESTINATION "${INCLUDE_INSTALL_DIR}"
     )
 
     # on the Mac support an extra install directory for application bundles
