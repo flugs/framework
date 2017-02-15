@@ -32,11 +32,7 @@ class FLUGS_CONTROLLER_EXPORT Param
 {
     Q_GADGET
 
-public:
-    Param()
-    {
-    }
-
+protected:
     virtual ~Param()
     {
     }

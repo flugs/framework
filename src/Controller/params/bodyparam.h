@@ -27,6 +27,7 @@
 
 FLUGS_BEGIN_NAMESPACE
 
+template<class T>
 class FLUGS_CONTROLLER_EXPORT BodyParam : public Param
 {
 };
