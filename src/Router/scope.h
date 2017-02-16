@@ -38,7 +38,6 @@ class FLUGS_ROUTER_EXPORT Scope : public Middleware
     Q_DISABLE_COPY(Scope)
 
 public:
-    explicit Scope(QObject* parent = nullptr);
     virtual ~Scope();
 
     Scope& subScope();
@@ -87,6 +86,7 @@ public:
     }
 
 protected:
+    explicit Scope(QObject* parent = nullptr);
     explicit Scope(ScopePrivate& d, QObject* parent = nullptr);
 
     virtual void handleRequest(Request req, Response* res);

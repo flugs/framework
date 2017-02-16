@@ -98,14 +98,15 @@ Scope& Scope::use(Middleware* m)
     Q_ASSERT(m);
     Q_D(Scope);
 
-    if(d->middleware) {
-        d->middleware->setNextMiddleware(m);
+    if(d->lastMiddleware) {
+        d->lastMiddleware->setNextMiddleware(m);
     }
-    else {
+    d->lastMiddleware = m;
+    m->setNextMiddleware(this);
+
+    if(!d->middleware) {
         d->middleware = m;
     }
-
-    m->setNextMiddleware(this);
 
     return *this;
 }
@@ -147,7 +148,7 @@ void Scope::handle(Request req, Response* res)
     }
 
     foreach (Route* r, d->routes) {
-        Request request = req;
+        Request request(req);
         if (r->handlerFunc() && r->match(request)) {
             r->handlerFunc()(request, res);
             return;
@@ -155,9 +156,6 @@ void Scope::handle(Request req, Response* res)
     }
 
     if (d->scope) {
-        d->scope->handle(req, res);
-    }
-    else {
-        next(req, res);
+        d->scope->handleRequest(req, res);
     }
 }

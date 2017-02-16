@@ -38,8 +38,8 @@ class FLUGS_ROUTER_EXPORT Router : public Scope
     Q_PROPERTY(bool defaultOptionsHandlerEnabled READ defaultOptionsHandlerEnabled WRITE setDefaultOptionsHandlerEnabled NOTIFY defaultOptionsHandlerEnabledChanged)
 
 public:
-    Router();
-    explicit Router(Server* server);
+    explicit Router(QObject *parent = nullptr);
+    explicit Router(Server* server, QObject *parent = nullptr);
     virtual ~Router();
 
     void serve(Server* server);
@@ -96,6 +96,9 @@ signals:
     void redirectTrailingSlashEnabledChanged();
     void defaultMethodNotAllowedHandlerEnabledChanged();
     void defaultOptionsHandlerEnabledChanged();
+
+protected:
+    void handle(Request req, Response* res) override;
 
 private:
     Q_DECLARE_PRIVATE(Router)

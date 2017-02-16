@@ -25,13 +25,13 @@
 
 FLUGS_USE_NAMESPACE
 
-Router::Router()
-    : Router(nullptr)
+Router::Router(QObject *parent)
+    : Router(nullptr, parent)
 {
 }
 
-Router::Router(Server* server)
-    : Scope(*new RouterPrivate(this))
+Router::Router(Server* server, QObject *parent)
+    : Scope(*new RouterPrivate(this), parent)
 {
     serve(server);
 }
@@ -127,5 +127,22 @@ void Router::setDefaultOptionsHandlerEnabled(bool state)
     if (d->defaultOptionsHandlerEnabled != state) {
         d->defaultOptionsHandlerEnabled = state;
         emit defaultOptionsHandlerEnabledChanged();
+    }
+}
+
+void Router::handle(Request req, Response* res)
+{
+    Q_D(Router);
+
+    Scope::handle(req, res);
+
+    if(!res->isFinished()) {
+        if(d->notFoundHandler) {
+            d->notFoundHandler(req, res);
+        }
+        else {
+            res->setStatusCode(Status::NotFound);
+            res->end();
+        }
     }
 }
