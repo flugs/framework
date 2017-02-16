@@ -39,6 +39,11 @@ HttpServerResponse::~HttpServerResponse()
 {
 }
 
+bool HttpServerResponse::isFinished() const
+{
+    return m_finished;
+}
+
 Status HttpServerResponse::status() const
 {
     return m_status;

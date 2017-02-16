@@ -37,6 +37,7 @@ class FLUGS_HTTPSERVER_EXPORT HttpServerResponse : public Response
 public:
     virtual ~HttpServerResponse();
 
+    bool isFinished() const override;
     Status status() const override;
     QVersionNumber version() const override;
     Headers& headers() override;

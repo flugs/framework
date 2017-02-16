@@ -56,6 +56,11 @@ public:
     virtual ~Response();
 
     /**
+     *
+     */
+    virtual bool isFinished() const = 0;
+
+    /**
      * @brief The response HTTP status code
      */
     virtual Status status() const = 0;

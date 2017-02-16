@@ -41,6 +41,11 @@ public:
     {
     }
 
+    bool isFinished() const override
+    {
+        return m_response->isFinished();
+    }
+
     Status status() const override
     {
         return m_response->status();
