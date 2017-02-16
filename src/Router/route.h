@@ -44,6 +44,13 @@ class FLUGS_ROUTER_EXPORT Route : public QObject
     Q_DISABLE_COPY(Route)
 
 public:
+    enum MatchState {
+        Ok,
+        MethodError,
+        PathError,
+        PathRegExError
+    };
+
     explicit Route(QObject* parent = nullptr);
     virtual ~Route();
 
@@ -63,11 +70,12 @@ public:
 
 protected:
     friend class Scope;
+
     explicit Route(const QSet<Method::Type> methods, const QString& path, HandlerFunction handler, QObject* parent = nullptr);
     explicit Route(Method::Type method, const QString& path, HandlerFunction handler, QObject* parent = nullptr);
     explicit Route(RoutePrivate& dd, QObject* parent = nullptr);
 
-    bool match(Request& req);
+    MatchState match(Request& req);
 
 private:
     Q_DECLARE_PRIVATE(Route)

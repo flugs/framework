@@ -49,6 +49,7 @@ protected:
 
     QString pathPrefix;
     Qt::CaseSensitivity pathPrefixCaseSensitivity = Qt::CaseSensitive;
+    Route::MatchState state = Route::PathError;
     QString host;
     Middleware* middleware = nullptr;
     Middleware* lastMiddleware = nullptr;

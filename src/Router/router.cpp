@@ -137,12 +137,10 @@ void Router::handle(Request req, Response* res)
     Scope::handle(req, res);
 
     if(!res->isFinished()) {
-        if(d->notFoundHandler) {
-            d->notFoundHandler(req, res);
+        if(req.method() == Method::Options && d->defaultOptionsHandlerEnabled) {
+            //TODO
         }
-        else {
-            res->setStatusCode(Status::NotFound);
-            res->end();
-        }
+
+        d->responseForMatchState(req, res);
     }
 }

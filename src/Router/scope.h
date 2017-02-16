@@ -91,6 +91,7 @@ protected:
 
     virtual void handleRequest(Request req, Response* res);
     void handle(Request req, Response* res) override;
+    Route::MatchState matchState() const;
 
 protected:
     Q_DECLARE_PRIVATE(Scope)

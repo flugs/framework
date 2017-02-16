@@ -44,6 +44,70 @@ protected:
     {
     }
 
+    void responseForMatchState(Request req, Response *res)
+    {
+        switch(state) {
+        case Route::Ok:
+            break;
+
+        case Route::MethodError:
+            responseMethodNotAllowed(req, res);
+            break;
+        case Route::PathError:
+        case Route::PathRegExError:
+            responseNotFound(req, res);
+            break;
+        }
+
+        if(!res->isFinished()) {
+            if(internalServerErrorHandler) {
+                internalServerErrorHandler(req, res);
+            }
+
+            if(!res->isFinished()) {
+                res->setStatusCode(Status::InternalServerError);
+                res->end();
+            }
+        }
+    }
+
+    void responseMethodNotAllowed(Request req, Response *res)
+    {
+        if(res->isFinished()) {
+            return;
+        }
+
+        if(methodNotAllowedHandler) {
+            methodNotAllowedHandler(req, res);
+        }
+
+        if(!res->isFinished()) {
+            if(defaultMethodNotAllowedHandlerEnabled) {
+                res->setStatusCode(Status::MethodNotAllowed);
+                res->end();
+            }
+            else {
+                responseNotFound(req, res);
+            }
+        }
+    }
+
+    void responseNotFound(Request req, Response *res)
+    {
+        if(res->isFinished()) {
+            return;
+        }
+
+        if(notFoundHandler) {
+            notFoundHandler(req, res);
+        }
+
+        if(!res->isFinished()) {
+            res->setStatusCode(Status::NotFound);
+            res->end();
+        }
+    }
+
     Server* server = nullptr;
 
     bool redirectTrailingSlashEnabled = true;

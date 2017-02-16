@@ -99,19 +99,15 @@ HandlerFunction Route::handlerFunc()
     return d_func()->handler;
 }
 
-bool Route::match(Request& req)
+Route::MatchState Route::match(Request& req)
 {
     Q_D(Route);
-
-    if (!d->methods.isEmpty() && !d->methods.contains(req.method().type())) {
-        return false;
-    }
 
     const QStringList mpath = d->path.split(QChar::fromLatin1('/'));
     const QStringList rpath = req.url().path().split(QChar::fromLatin1('/'));
 
     if (mpath.size() != rpath.size()) {
-        return false;
+        return Route::PathError;
     }
 
     for (int i = 0; i < mpath.size(); ++i) {
@@ -136,14 +132,18 @@ bool Route::match(Request& req)
                     req.addPathParam(key, rp);
                 }
                 else {
-                    return false;
+                    return Route::PathRegExError;
                 }
             }
         }
         else if (mp != rp) {
-            return false;
+            return Route::PathError;
         }
     }
 
-    return true;
+    if (!d->methods.isEmpty() && !d->methods.contains(req.method().type())) {
+        return Route::MethodError;
+    }
+
+    return Route::Ok;
 }

@@ -148,8 +148,18 @@ void Scope::handle(Request req, Response* res)
     }
 
     foreach (Route* r, d->routes) {
+        if(!r->handlerFunc()) {
+            continue;
+        }
+
         Request request(req);
-        if (r->handlerFunc() && r->match(request)) {
+        Route::MatchState state = r->match(request);
+
+        if(d->state > state) {
+            d->state = state;
+        }
+
+        if(state == Route::Ok) {
             r->handlerFunc()(request, res);
             return;
         }
@@ -157,5 +167,13 @@ void Scope::handle(Request req, Response* res)
 
     if (d->scope) {
         d->scope->handleRequest(req, res);
+        if(d->state > d->scope->matchState()) {
+            d->state = d->scope->matchState();
+        }
     }
+}
+
+Route::MatchState Scope::matchState() const
+{
+    return d_func()->state;
 }
