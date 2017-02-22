@@ -43,7 +43,7 @@ public:
 
     QString name;
     QString path;
-    QSet<Method::Type> methods;
+    Method::Types methods = Method::Other;
     QList<Middleware*> middleware;
     HandlerFunction handler = nullptr;
 

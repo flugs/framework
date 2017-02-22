@@ -50,14 +50,9 @@ Route& Scope::add(Route* r)
     return *r;
 }
 
-Route& Scope::add(const QSet<Method::Type> methods, const QString& path, HandlerFunction handler)
+Route& Scope::add(Method::Types methods, const QString& path, HandlerFunction handler)
 {
     return add(new Route(methods, path, handler, this));
-}
-
-Route& Scope::add(Method::Type method, const QString& path, HandlerFunction handler)
-{
-    return add(new Route(method, path, handler, this));
 }
 
 Scope& Scope::subScope()

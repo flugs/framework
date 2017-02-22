@@ -85,6 +85,7 @@ public:
         // clang-format on
     };
     Q_ENUM(Type)
+    Q_DECLARE_FLAGS(Types, Type)
 
     /**
      *
@@ -123,6 +124,9 @@ private:
 };
 
 FLUGS_END_NAMESPACE
+
+Q_DECLARE_OPERATORS_FOR_FLAGS(FLUGS_NAMESPACE_PREFIX Method::Types)
+
 
 Q_DECLARE_TYPEINFO(FLUGS_NAMESPACE_PREFIX Method, Q_PRIMITIVE_TYPE);
 

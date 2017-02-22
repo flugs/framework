@@ -55,8 +55,7 @@ public:
     virtual ~Route();
 
     Route& name(const QString& name);
-    Route& methods(const QSet<Method::Type> methods);
-    Route& methods(Method::Type method);
+    Route& methods(Method::Types methods);
     Route& path(const QString& path);
     Route& handler(HandlerFunction handler);
     Route& use(Middleware* m);
@@ -71,11 +70,12 @@ public:
 protected:
     friend class Scope;
 
-    explicit Route(const QSet<Method::Type> methods, const QString& path, HandlerFunction handler, QObject* parent = nullptr);
-    explicit Route(Method::Type method, const QString& path, HandlerFunction handler, QObject* parent = nullptr);
+    explicit Route(Method::Types methods, const QString& path, HandlerFunction handler, QObject* parent = nullptr);
     explicit Route(RoutePrivate& dd, QObject* parent = nullptr);
 
     MatchState match(Request& req);
+
+    static MatchState parsePath(const QString &requestPath, const QString &matchPath, Request &req);
 
 private:
     Q_DECLARE_PRIVATE(Route)

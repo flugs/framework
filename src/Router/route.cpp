@@ -33,7 +33,7 @@ Route::Route(QObject* parent)
 {
 }
 
-Route::Route(const QSet<Method::Type> methods, const QString& path, HandlerFunction handler, QObject* parent)
+Route::Route(Method::Types methods, const QString& path, HandlerFunction handler, QObject* parent)
     : QObject(parent)
     , d_ptr(new RoutePrivate(this))
 {
@@ -42,11 +42,6 @@ Route::Route(const QSet<Method::Type> methods, const QString& path, HandlerFunct
     d->methods = methods;
     d->path = path;
     d->handler = handler;
-}
-
-Route::Route(Method::Type method, const QString& path, HandlerFunction handler, QObject* parent)
-    : Route(QSet<Method::Type>({ method }), path, handler, parent)
-{
 }
 
 Route::Route(RoutePrivate& dd, QObject* parent)
@@ -65,15 +60,10 @@ Route& Route::name(const QString& name)
     return *this;
 }
 
-Route& Route::methods(const QSet<Method::Type> methods)
+Route& Route::methods(Method::Types methods)
 {
     d_func()->methods = methods;
     return *this;
-}
-
-Route& Route::methods(Method::Type method)
-{
-    return methods(QSet<Method::Type>({ method }));
 }
 
 Route& Route::path(const QString& path)
@@ -103,8 +93,23 @@ Route::MatchState Route::match(Request& req)
 {
     Q_D(Route);
 
-    const QStringList mpath = d->path.split(QChar::fromLatin1('/'));
-    const QStringList rpath = req.url().path().split(QChar::fromLatin1('/'));
+    const auto state = parsePath(d->path, req.url().path(), req);
+    if(state != Route::Ok) {
+        return state;
+    }
+
+    if (!d->methods.testFlag(req.method().type())) {
+        return Route::MethodError;
+    }
+
+    return Route::Ok;
+}
+
+
+Route::MatchState Route::parsePath(const QString &requestPath, const QString &matchPath, Request &req)
+{
+    const QStringList mpath = matchPath.split(QChar::fromLatin1('/'));
+    const QStringList rpath = requestPath.split(QChar::fromLatin1('/'));
 
     if (mpath.size() != rpath.size()) {
         return Route::PathError;
@@ -114,10 +119,12 @@ Route::MatchState Route::match(Request& req)
         const QString mp = mpath.at(i);
         const QString rp = rpath.at(i);
 
-        if (mp.startsWith(QChar::fromLatin1(':'))) { // variable path segment
+        if (mp.startsWith(QChar::fromLatin1(':'))) {
+            // variable path segment...
             req.addPathParam(mp.mid(1), rp);
         }
         else if (mp.startsWith(QChar::fromLatin1('{')) && mp.endsWith(QChar::fromLatin1('}'))) {
+            // advanved variable path segment...
             QString p = mp.mid(1, mp.length() - 2);
 
             if (!p.contains(QChar::fromLatin1(':'))) {
@@ -139,10 +146,6 @@ Route::MatchState Route::match(Request& req)
         else if (mp != rp) {
             return Route::PathError;
         }
-    }
-
-    if (!d->methods.isEmpty() && !d->methods.contains(req.method().type())) {
-        return Route::MethodError;
     }
 
     return Route::Ok;

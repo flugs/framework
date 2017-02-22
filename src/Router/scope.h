@@ -43,8 +43,7 @@ public:
     Scope& subScope();
 
     Route& add(Route* route);
-    Route& add(const QSet<Method::Type> method, const QString& path, HandlerFunction handler);
-    Route& add(Method::Type method, const QString& path, HandlerFunction handler);
+    Route& add(Method::Types methods, const QString& path, HandlerFunction handler);
 
     Scope& pathPrefix(const QString& pathPrefix, Qt::CaseSensitivity cs = Qt::CaseSensitive);
     Scope& host(const QString& host);
@@ -57,32 +56,32 @@ public:
 
     Route& put(const QString& path, HandlerFunction handler)
     {
-        return add(Method::Type::Get, path, handler);
+        return add(Method::Type::Put, path, handler);
     }
 
     Route& post(const QString& path, HandlerFunction handler)
     {
-        return add(Method::Type::Get, path, handler);
+        return add(Method::Type::Post, path, handler);
     }
 
     Route& head(const QString& path, HandlerFunction handler)
     {
-        return add(Method::Type::Get, path, handler);
+        return add(Method::Type::Head, path, handler);
     }
 
     Route& options(const QString& path, HandlerFunction handler)
     {
-        return add(Method::Type::Get, path, handler);
+        return add(Method::Type::Options, path, handler);
     }
 
     Route& patch(const QString& path, HandlerFunction handler)
     {
-        return add(Method::Type::Get, path, handler);
+        return add(Method::Type::Patch, path, handler);
     }
 
     Route& del(const QString& path, HandlerFunction handler)
     {
-        return add(Method::Type::Get, path, handler);
+        return add(Method::Type::Delete, path, handler);
     }
 
 protected:
