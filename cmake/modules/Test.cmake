@@ -18,6 +18,15 @@ function(QC_ADD_TEST)
     set(multiValueArgs LINK_LIBRARIES)
     cmake_parse_arguments(ARG "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
+    if(NOT BUILD_TESTING)
+        return()
+    endif()
+
+    find_package(Qt5Test ${REQUIRED_QT_VERSION} NO_MODULE)
+    if(NOT Qt5Test_FOUND)
+        return()
+    endif()
+
     set(_sources ${ARG_UNPARSED_ARGUMENTS})
     list(LENGTH _sources _sourceCount)
 
@@ -48,7 +57,7 @@ function(QC_ADD_TEST)
     endif()
 
     add_test(NAME ${_testname} COMMAND ${_testname})
-    target_link_libraries(${_testname} ${ARG_LINK_LIBRARIES})
+    target_link_libraries(${_testname} ${ARG_LINK_LIBRARIES} Qt5::Core Qt5::Test)
 endfunction()
 
 
@@ -67,4 +76,3 @@ function(QC_ADD_TESTS)
         qc_add_test(${_tstsrc} NAME_PREFIX ${ARG_NAME_PREFIX} LINK_LIBRARIES ${ARG_LINK_LIBRARIES} ${_gui})
     endforeach()
 endfunction()
-

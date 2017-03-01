@@ -25,6 +25,7 @@
 
 #include "flugs_router_export.h"
 #include <Flugs/Foundation/Middleware>
+#include <Flugs/Router/RouteBuilder>
 
 #include <QScopedPointer>
 
@@ -44,9 +45,12 @@ class FLUGS_ROUTER_EXPORT Route : public QObject
     Q_DISABLE_COPY(Route)
 
 public:
+    using Builder = RouteBuilder;
+
     enum MatchState {
         Ok,
         MethodError,
+        PathSizeError,
         PathError,
         PathRegExError
     };
@@ -62,10 +66,7 @@ public:
 
     HandlerFunction handlerFunc();
 
-    // QUrl url() const;
-    // static QUrl to(const QString &name) { return QUrl(); }
-    // static QUrl to(const QString &name, const QVariant &param) { return QUrl(); }
-    // static QUrl to(const QString &name, const QVariantList &params) { return QUrl(); }
+    static Builder to(const QString &name);
 
 protected:
     friend class Scope;
@@ -75,6 +76,7 @@ protected:
 
     MatchState match(Request& req);
 
+    static MatchState parsePathSegment(const QString &requestPathSeg, const QString &matchPathSeg, Request &req);
     static MatchState parsePath(const QString &requestPath, const QString &matchPath, Request &req);
 
 private:

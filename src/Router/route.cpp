@@ -23,19 +23,82 @@
 #include "route.h"
 #include "route_p.h"
 
+#include <QHash>
+#include <QPointer>
 #include <QRegularExpression>
 
 FLUGS_USE_NAMESPACE
+
+static QList<QPointer<FLUGS_NAMESPACE_PREFIX Route>> routeMap;
+
+
+using PathNodeValidator = std::function<bool(PathNode &node)>;
+
+struct PathNode
+{
+    bool optional = false;
+    bool variable = false;
+    QString name;
+    QString value;
+    PathNodeValidator validator = nullptr;
+    PathNode *next = nullptr;
+
+    Route::MatchState match(const QString &requestPath, const QString &matchPath, QHash<QString, QString> &params)
+    {
+        return match(requestPath.split(QChar::fromLatin1('/')), matchPath.split(QChar::fromLatin1('/')), params);
+    }
+
+    Route::MatchState match(QStringList requestPath, QStringList matchPath, QHash<QString, QString> &params)
+    {
+        if(matchPath.isEmpty()) {
+            return Route::PathSizeError;
+        }
+
+        QString p = path.takeFirst();
+        if (p.startsWith(QChar::fromLatin1(':'))) {
+            const QString name = p.mid(1);
+            // variable path segment...
+            if(!params.contains(name)) {
+                params.insert(p.mid(1), requestPathSeg);
+            }
+        }
+        else if (matchPathSeg.startsWith(QChar::fromLatin1('{')) && matchPathSeg.endsWith(QChar::fromLatin1('}'))) {
+            // advanved variable path segment...
+            QString p = matchPathSeg.mid(1, matchPathSeg.length() - 2);
+
+            if (!p.contains(QChar::fromLatin1(':'))) {
+                req.addPathParam(p, requestPathSeg);
+            }
+            else {
+                QString key = p.mid(0, p.indexOf(QChar::fromLatin1(':')));
+                QString pattern = p.mid(p.indexOf(QChar::fromLatin1(':')) + 1);
+
+                QRegularExpression re(pattern);
+                if (re.match(requestPathSeg).hasMatch()) {
+                    req.addPathParam(key, requestPathSeg);
+                }
+                else {
+                    return Route::PathRegExError;
+                }
+            }
+        }
+        else if (matchPathSeg != requestPathSeg) {
+            return Route::PathError;
+        }
+
+
+    }
+};
 
 Route::Route(QObject* parent)
     : QObject(parent)
     , d_ptr(new RoutePrivate(this))
 {
+    routeMap.append(this);
 }
 
 Route::Route(Method::Types methods, const QString& path, HandlerFunction handler, QObject* parent)
-    : QObject(parent)
-    , d_ptr(new RoutePrivate(this))
+    : Route(parent)
 {
     Q_D(Route);
 
@@ -48,10 +111,12 @@ Route::Route(RoutePrivate& dd, QObject* parent)
     : QObject(parent)
     , d_ptr(&dd)
 {
+    routeMap.append(this);
 }
 
 Route::~Route()
 {
+    routeMap.removeOne(this);
 }
 
 Route& Route::name(const QString& name)
@@ -106,6 +171,39 @@ Route::MatchState Route::match(Request& req)
 }
 
 
+Route::MatchState Route::parsePathSegment(const QString &requestPathSeg, const QString &matchPathSeg, Request &req)
+{
+    if (matchPathSeg.startsWith(QChar::fromLatin1(':'))) {
+        // variable path segment...
+        req.addPathParam(matchPathSeg.mid(1), requestPathSeg);
+    }
+    else if (matchPathSeg.startsWith(QChar::fromLatin1('{')) && matchPathSeg.endsWith(QChar::fromLatin1('}'))) {
+        // advanved variable path segment...
+        QString p = matchPathSeg.mid(1, matchPathSeg.length() - 2);
+
+        if (!p.contains(QChar::fromLatin1(':'))) {
+            req.addPathParam(p, requestPathSeg);
+        }
+        else {
+            QString key = p.mid(0, p.indexOf(QChar::fromLatin1(':')));
+            QString pattern = p.mid(p.indexOf(QChar::fromLatin1(':')) + 1);
+
+            QRegularExpression re(pattern);
+            if (re.match(requestPathSeg).hasMatch()) {
+                req.addPathParam(key, requestPathSeg);
+            }
+            else {
+                return Route::PathRegExError;
+            }
+        }
+    }
+    else if (matchPathSeg != requestPathSeg) {
+        return Route::PathError;
+    }
+
+    return Route::Ok;
+}
+
 Route::MatchState Route::parsePath(const QString &requestPath, const QString &matchPath, Request &req)
 {
     const QStringList mpath = matchPath.split(QChar::fromLatin1('/'));
@@ -115,38 +213,25 @@ Route::MatchState Route::parsePath(const QString &requestPath, const QString &ma
         return Route::PathError;
     }
 
+    Route::MatchState state = Route::Ok;
     for (int i = 0; i < mpath.size(); ++i) {
-        const QString mp = mpath.at(i);
-        const QString rp = rpath.at(i);
-
-        if (mp.startsWith(QChar::fromLatin1(':'))) {
-            // variable path segment...
-            req.addPathParam(mp.mid(1), rp);
-        }
-        else if (mp.startsWith(QChar::fromLatin1('{')) && mp.endsWith(QChar::fromLatin1('}'))) {
-            // advanved variable path segment...
-            QString p = mp.mid(1, mp.length() - 2);
-
-            if (!p.contains(QChar::fromLatin1(':'))) {
-                req.addPathParam(p, rp);
-            }
-            else {
-                QString key = p.mid(0, p.indexOf(QChar::fromLatin1(':')));
-                QString pattern = p.mid(p.indexOf(QChar::fromLatin1(':')) + 1);
-
-                QRegularExpression re(pattern);
-                if (re.match(rp).hasMatch()) {
-                    req.addPathParam(key, rp);
-                }
-                else {
-                    return Route::PathRegExError;
-                }
-            }
-        }
-        else if (mp != rp) {
-            return Route::PathError;
+        state = parsePathSegment(rpath.at(i), mpath.at(i), req);
+        if(state != Route::Ok) {
+            break;
         }
     }
 
-    return Route::Ok;
+    return state;
+}
+
+Route::Builder Route::to(const QString &name)
+{
+    QList<QPointer<Route>> list;
+    foreach(const QPointer<Route> r, routeMap) {
+        if(!r.isNull() && !r->d_func()->name.isEmpty() && r->d_func()->name == name) {
+            list.append(r);
+        }
+    }
+
+   return Route::Builder(list);
 }

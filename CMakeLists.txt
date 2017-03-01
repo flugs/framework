@@ -20,7 +20,6 @@ message( STATUS "${PROJECT_NAME} ${PROJECT_VERSION} will be built for install in
 
 add_subdirectory(3rdparty)
 add_subdirectory(src)
-add_subdirectory(tests)
 
 add_library(other_files_target EXCLUDE_FROM_ALL
   .clang-format

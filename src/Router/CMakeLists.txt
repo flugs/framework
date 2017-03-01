@@ -8,11 +8,13 @@ set(SOURCES
     route_p.h
     scope.cpp
     scope_p.h
+    routebuilder.cpp
 )
 
 set(GEN_INCLUDE_HEADERS
     Router
-    Route
+    Route    
+    RouteBuilder
     Scope
 )
 
