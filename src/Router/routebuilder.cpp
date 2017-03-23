@@ -27,44 +27,33 @@
 
 FLUGS_USE_NAMESPACE
 
-struct RoutePrivate
-{
-    explicit RoutePrivate(Route *r)
-      : route(r)
-    {
-        if(!route.isNull()) {
-            path = route->path();
-        }
-    }
-
-    QString path;
-    QPointer<Route> route;
-};
-
-
 RouteBuilder::RouteBuilder(QList<Route*> route)
 {
     foreach(Route *r, route) {
-        m_list.append(new RoutePrivate(r));
+        QString p = r->getPath();
+        if(!p.isEmpty()) {
+            m_routes.insert(r->getPath(), r);
+        }
     }
 }
 
 RouteBuilder::~RouteBuilder()
 {
-    qDeleteAll(m_list);
 }
 
 bool RouteBuilder::isValid() const
 {
+    return !m_routes.isEmpty();
 }
 
-RouteBuilder& RouteBuilder::arg(const QString &value)
+RouteBuilder& RouteBuilder::arg(const QVariant &value)
 {
+    return *this;
 }
 
-RouteBuilder& RouteBuilder::param(const QString &key, const QString &value)
+RouteBuilder& RouteBuilder::param(const QString &key, const QVariant &value)
 {
-
+    return *this;
 }
 
 QUrl RouteBuilder::url() const

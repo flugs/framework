@@ -91,6 +91,11 @@ Route& Route::use(Middleware* m)
     return *this;
 }
 
+QString Route::getPath() const
+{
+    return d_func()->path;
+}
+
 HandlerFunction Route::handlerFunc()
 {
     return d_func()->handler;
@@ -111,7 +116,6 @@ Route::MatchState Route::match(Request& req)
 
     return Route::Ok;
 }
-
 
 Route::MatchState Route::parsePathSegment(const QString &requestPathSeg, const QString &matchPathSeg, Request &req)
 {
@@ -165,10 +169,10 @@ Route::MatchState Route::parsePath(const QString &requestPath, const QString &ma
 
     return state;
 }
-/*
+
 Route::Builder Route::to(const QString &name)
 {
-    QList<QPointer<Route>> list;
+    QList<Route*> list;
     foreach(const QPointer<Route> r, routeMap) {
         if(!r.isNull() && !r->d_func()->name.isEmpty() && r->d_func()->name == name) {
             list.append(r);
@@ -177,4 +181,4 @@ Route::Builder Route::to(const QString &name)
 
    return Route::Builder(list);
 }
-*/
+

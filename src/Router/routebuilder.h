@@ -31,7 +31,6 @@
 FLUGS_BEGIN_NAMESPACE
 
 class Route;
-class RouteBuilderData;
 
 class FLUGS_ROUTER_EXPORT RouteBuilder
 {
@@ -41,14 +40,13 @@ public:
 
     bool isValid() const;
 
-    RouteBuilder& arg(const QString &value);
-    RouteBuilder& param(const QString &key, const QString &value);
+    RouteBuilder& arg(const QVariant &value);
+    RouteBuilder& param(const QString &key, const QVariant &value);
 
     QUrl url() const;
 
 private:
-    struct RouteNode;
-    QList<RouteNode*> m_list;
+    QHash<QString, QPointer<Route>> m_routes;
 };
 
 FLUGS_END_NAMESPACE
