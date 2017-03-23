@@ -1,7 +1,7 @@
 #include <QtTest>
-#include <QHttpServer/Headers>
+#include <Flugs/Foundation/Headers>
 
-QHTTPSERVER_USE_NAMESPACE
+FLUGS_USE_NAMESPACE
 
 class HeadersTest : public QObject
 {

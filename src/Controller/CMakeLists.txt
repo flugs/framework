@@ -38,3 +38,5 @@ qc_add_library(TARGET ${COMPONENT} NS Flugs ${SOURCES})
 target_link_libraries(${COMPONENT} PUBLIC ${PUBLIC_LINK_LIBRARIES})
 qc_generate_headers(TARGET ${COMPONENT} NS Flugs ${GEN_INCLUDE_HEADERS})
 qc_install_library(TARGET ${COMPONENT} NS Flugs DIRECTORIES ${INSTALL_DIRS})
+
+add_subdirectory(tests)

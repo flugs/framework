@@ -25,7 +25,7 @@
 
 #include "flugs_router_export.h"
 #include <Flugs/Foundation/Middleware>
-#include <Flugs/Router/RouteBuilder>
+//#include <Flugs/Router/RouteBuilder>
 
 #include <QScopedPointer>
 
@@ -45,7 +45,7 @@ class FLUGS_ROUTER_EXPORT Route : public QObject
     Q_DISABLE_COPY(Route)
 
 public:
-    using Builder = RouteBuilder;
+    //using Builder = RouteBuilder;
 
     enum MatchState {
         Ok,
@@ -66,7 +66,7 @@ public:
 
     HandlerFunction handlerFunc();
 
-    static Builder to(const QString &name);
+    //static Builder to(const QString &name);
 
 protected:
     friend class Scope;

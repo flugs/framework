@@ -1,8 +1,8 @@
 #include <QtTest>
 #include <QtCore>
-#include <QHttpServer/Status>
+#include <Flugs/Foundation/Status>
 
-QHTTPSERVER_USE_NAMESPACE
+FLUGS_USE_NAMESPACE
 
 class StatusTest : public QObject
 {

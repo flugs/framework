@@ -165,7 +165,7 @@ Route::MatchState Route::parsePath(const QString &requestPath, const QString &ma
 
     return state;
 }
-
+/*
 Route::Builder Route::to(const QString &name)
 {
     QList<QPointer<Route>> list;
@@ -177,3 +177,4 @@ Route::Builder Route::to(const QString &name)
 
    return Route::Builder(list);
 }
+*/
