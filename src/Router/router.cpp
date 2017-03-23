@@ -144,3 +144,13 @@ void Router::handle(Request req, Response* res)
         d->responseForMatchState(req, res);
     }
 }
+
+PathValidator Router::pathValidator(const QString &name)
+{
+    return Router::pathValidator(name);
+}
+
+void Router::setPathValidator(const QString &name, PathValidator validator)
+{
+    Router::setPathValidator(name, validator);
+}

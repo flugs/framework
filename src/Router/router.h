@@ -30,6 +30,8 @@ FLUGS_BEGIN_NAMESPACE
 
 class RouterPrivate;
 
+using PathValidator = std::function<bool(const QString &pathMatch, const QString &pathSegment)>;
+
 class FLUGS_ROUTER_EXPORT Router : public Scope
 {
     Q_OBJECT
@@ -42,6 +44,9 @@ public:
     explicit Router(Server* server, QObject *parent = nullptr);
     virtual ~Router();
 
+    /**
+     *
+     */
     void serve(Server* server);
 
     /**
@@ -62,6 +67,10 @@ public:
      *
      */
     HandlerFunction internalServerErrorHandler() const;
+
+    /**
+     *
+     */
     void setInternalServerErrorHandler(HandlerFunction handler);
 
     /**
@@ -86,6 +95,9 @@ public:
      * Custom OPTIONS handlers take priority over automatic replies.
      */
     bool defaultOptionsHandlerEnabled() const;
+
+    static PathValidator pathValidator(const QString &name);
+    static void setPathValidator(const QString &name, PathValidator validator);
 
 public slots:
     void setRedirectTrailingSlashEnabled(bool state);

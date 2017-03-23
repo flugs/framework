@@ -108,6 +108,16 @@ protected:
         }
     }
 
+    static PathValidator pathValidator(const QString &name)
+    {
+        return pathValidators.value(name);
+    }
+
+    static void setPathValidator(const QString &name, PathValidator validator)
+    {
+        pathValidators.insert(name, validator);
+    }
+
     Server* server = nullptr;
 
     bool redirectTrailingSlashEnabled = true;
@@ -117,6 +127,7 @@ protected:
     HandlerFunction notFoundHandler = nullptr;
     HandlerFunction methodNotAllowedHandler = nullptr;
     HandlerFunction internalServerErrorHandler = nullptr;
+    static QHash<QString, PathValidator> pathValidators;
 };
 
 FLUGS_END_NAMESPACE
