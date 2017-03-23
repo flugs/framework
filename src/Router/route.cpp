@@ -32,64 +32,6 @@ FLUGS_USE_NAMESPACE
 static QList<QPointer<FLUGS_NAMESPACE_PREFIX Route>> routeMap;
 
 
-using PathNodeValidator = std::function<bool(PathNode &node)>;
-
-struct PathNode
-{
-    bool optional = false;
-    bool variable = false;
-    QString name;
-    QString value;
-    PathNodeValidator validator = nullptr;
-    PathNode *next = nullptr;
-
-    Route::MatchState match(const QString &requestPath, const QString &matchPath, QHash<QString, QString> &params)
-    {
-        return match(requestPath.split(QChar::fromLatin1('/')), matchPath.split(QChar::fromLatin1('/')), params);
-    }
-
-    Route::MatchState match(QStringList requestPath, QStringList matchPath, QHash<QString, QString> &params)
-    {
-        if(matchPath.isEmpty()) {
-            return Route::PathSizeError;
-        }
-
-        QString p = path.takeFirst();
-        if (p.startsWith(QChar::fromLatin1(':'))) {
-            const QString name = p.mid(1);
-            // variable path segment...
-            if(!params.contains(name)) {
-                params.insert(p.mid(1), requestPathSeg);
-            }
-        }
-        else if (matchPathSeg.startsWith(QChar::fromLatin1('{')) && matchPathSeg.endsWith(QChar::fromLatin1('}'))) {
-            // advanved variable path segment...
-            QString p = matchPathSeg.mid(1, matchPathSeg.length() - 2);
-
-            if (!p.contains(QChar::fromLatin1(':'))) {
-                req.addPathParam(p, requestPathSeg);
-            }
-            else {
-                QString key = p.mid(0, p.indexOf(QChar::fromLatin1(':')));
-                QString pattern = p.mid(p.indexOf(QChar::fromLatin1(':')) + 1);
-
-                QRegularExpression re(pattern);
-                if (re.match(requestPathSeg).hasMatch()) {
-                    req.addPathParam(key, requestPathSeg);
-                }
-                else {
-                    return Route::PathRegExError;
-                }
-            }
-        }
-        else if (matchPathSeg != requestPathSeg) {
-            return Route::PathError;
-        }
-
-
-    }
-};
-
 Route::Route(QObject* parent)
     : QObject(parent)
     , d_ptr(new RoutePrivate(this))
