@@ -30,11 +30,12 @@ test: all
 .PHONY: coverage
 coverage: test
 	lcov -b . -d .build/ -c -o .build/coverage.info
-	lcov --remove .build/coverage.info "/usr*" -o .build/coverage.info # remove output for external libraries
-	lcov --remove .build/coverage.info ".build*" -o .build/coverage.info # remove output for build directory
-	lcov --remove .build/coverage.info "*/3rdparty/*" -o .build/coverage.info # remove output for 3rdparty directory
+	lcov --remove .build/coverage.info "/usr*" -o .build/coverage.info           # remove output for external libraries
+	lcov --remove .build/coverage.info ".build*" -o .build/coverage.info         # remove output for build directory
+	lcov --remove .build/coverage.info "*/.build*" -o .build/coverage.info       # remove output for build directory
+	lcov --remove .build/coverage.info "*/3rdparty/*" -o .build/coverage.info    # remove output for 3rdparty directory
 	lcov --remove .build/coverage.info "*/tests/*test.*" -o .build/coverage.info # remove output for tests directory
-	genhtml -o doc/coverage -t "QHttpServer test coverage" --num-spaces 4 .build/coverage.info
+	genhtml -o doc/coverage -t "Flugs test coverage" --num-spaces 4 .build/coverage.info
 	python3 ./scripts/gcovr -r . -e .build -e tests --xml > doc/coverage.xml
 
 .PHONY: doc
